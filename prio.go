@@ -35,8 +35,6 @@
 //
 package prio
 
-import "container/heap"
-
 // A type that implements prio.Interface can be inserted into a priority queue.
 type Interface interface {
 	// Less returns whether this element should sort before element x.
@@ -48,7 +46,7 @@ type Interface interface {
 // Queue represents a priority queue.
 // The zero value for Queue is an empty queue ready to use.
 type Queue struct {
-	h myHeap // a slice implementing heap.Interface
+	h []Interface
 }
 
 // New returns an initialized priority queue with the given elements.
@@ -56,24 +54,35 @@ type Queue struct {
 // and hence might change the elements of x.
 // The complexity is O(n), where n = x.Len().
 func New(x ...Interface) Queue {
-	q := Queue{h: x}
-	for i, v := range q.h {
+	q := Queue{x}
+	h := q.h
+	for i, v := range h {
 		v.Index(i)
 	}
-	heap.Init(&q.h)
+	heapify(h)
 	return q
 }
 
 // Push pushes the element x onto the queue.
 // The complexity is O(log(n)) where n = q.Len().
 func (q *Queue) Push(x Interface) {
-	heap.Push(&q.h, x)
+	h := q.h
+	n := len(h)
+	q.h = append(h, x)
+	up(q.h, n) // x.Index(n) is done by up.
 }
 
 // Pop removes a minimum element (according to Less) from the queue and returns it.
 // The complexity is O(log(n)), where n = q.Len().
 func (q *Queue) Pop() Interface {
-	return heap.Pop(&q.h).(Interface)
+	h := q.h
+	n := len(h) - 1
+	x := h[0]
+	h[0], h[n] = h[n], h[0]
+	down(h, 0, n) // h[0].Index(0) is done by down.
+	h[n] = nil
+	q.h = h[:n]
+	return x
 }
 
 // Peek returns, but does not remove, a minimum element (according to Less) of the queue.
@@ -84,7 +93,17 @@ func (q *Queue) Peek() Interface {
 // Remove removes the element at index i from the queue and returns it.
 // The complexity is O(log(n)), where n = q.Len().
 func (q *Queue) Remove(i int) Interface {
-	return heap.Remove(&q.h, i).(Interface)
+	h := q.h
+	n := len(h) - 1
+	x := h[i]
+	if n != i {
+		h[i], h[n] = h[n], h[i]
+		down(h, i, n) // h[i].Index(i) is done by down.
+		up(h, i)
+	}
+	h[n] = nil
+	q.h = h[:n]
+	return x
 }
 
 // Len returns the number of elements in the queue.
@@ -92,34 +111,48 @@ func (q *Queue) Len() int {
 	return len(q.h)
 }
 
-type myHeap []Interface // implements heap.Interface
-
-func (h myHeap) Len() int {
-	return len(h)
+// Establishes the heap invariant in O(n) time.
+func heapify(h []Interface) {
+	n := len(h)
+	for i := n/2 - 1; i >= 0; i-- {
+		down(h, i, n)
+	}
 }
 
-func (h myHeap) Less(i, j int) bool {
-	return h[i].Less(h[j])
+// Moves element at position j towards top of heap to restore invariant.
+func up(h []Interface, j int) {
+	for {
+		i := (j - 1) / 2 // parent
+		if i == j || h[i].Less(h[j]) {
+			h[j].Index(j)
+			break
+		}
+		h[i], h[j] = h[j], h[i]
+		h[j].Index(j)
+		j = i
+	}
 }
 
-func (h myHeap) Swap(i, j int) {
-	h[i], h[j] = h[j], h[i]
-	h[i].Index(i)
-	h[j].Index(j)
-}
-
-func (h *myHeap) Push(x interface{}) {
-	*h = append(*h, x.(Interface))
-	x.(Interface).Index(len(*h) - 1)
-}
-
-func (h *myHeap) Pop() interface{} {
-	a := *h
-	i := len(a) - 1
-	x := a[i]
-	a[i] = nil
-	*h = a[:i]
-	return x
+// Moves element at position i towards bottom of heap to restore invariant.
+func down(h []Interface, i, n int) {
+	for {
+		j1 := 2*i + 1
+		if j1 >= n {
+			h[i].Index(i)
+			break
+		}
+		j := j1 // left child
+		if j2 := j1 + 1; j2 < n && !h[j1].Less(h[j2]) {
+			j = j2 // = 2*i + 2  // right child
+		}
+		if h[i].Less(h[j]) {
+			h[i].Index(i)
+			break
+		}
+		h[i], h[j] = h[j], h[i]
+		h[i].Index(i)
+		i = j
+	}
 }
 
 // Returns the element at index i in the queue. Exported for testing.
