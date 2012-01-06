@@ -45,6 +45,16 @@ func verify(t *testing.T, q Queue) {
 	}
 }
 
+// Verify that all elements in a queue of myType have been given the correct index.
+func verifyIndex(t *testing.T, q Queue) {
+	for i := 0; i < q.Len(); i++ {
+		index := q.Get(i).(*myType).index
+		if index != i {
+			t.Errorf("wrong index [%d] = %d", i, index)
+		}
+	}
+}
+
 func TestNew0(t *testing.T) {
 	a := make([]Interface, 10)
 	for i := 0; i < 10; i++ {
@@ -83,8 +93,8 @@ func Test(t *testing.T) {
 	q := New()
 	for i := 20; i > 10; i-- {
 		q.Push(myInt(i))
+		verify(t, q)
 	}
-	verify(t, q)
 
 	for i := 10; i > 0; i-- {
 		q.Push(myInt(i))
@@ -94,10 +104,11 @@ func Test(t *testing.T) {
 	for i := 1; q.Len() > 0; i++ {
 		x := q.Peek().(myInt)
 		y := q.Pop().(myInt)
+		verify(t, q)
 		if i < 20 {
 			q.Push(myInt(20 + i))
+			verify(t, q)
 		}
-		verify(t, q)
 		if int(x) != i {
 			t.Errorf("%d.th peek got %d; want %d", i, x, i)
 		}
@@ -113,8 +124,9 @@ func TestRemove0(t *testing.T) {
 	for i := 0; i < len(a); i++ {
 		a[i] = &myType{i, 0}
 		q.Push(a[i])
+		verify(t, q)
+		verifyIndex(t, q)
 	}
-	verify(t, q)
 
 	for i := 0; i < len(a); i++ {
 		x := q.Remove(0)
@@ -122,6 +134,7 @@ func TestRemove0(t *testing.T) {
 			t.Errorf("Remove(0) got %v; want %v", x, a[i])
 		}
 		verify(t, q)
+		verifyIndex(t, q)
 	}
 }
 
@@ -131,8 +144,9 @@ func TestRemove1(t *testing.T) {
 	for i := 0; i < len(a); i++ {
 		a[i] = &myType{i, 0}
 		q.Push(a[i])
+		verify(t, q)
+		verifyIndex(t, q)
 	}
-	verify(t, q)
 
 	for i := len(a) - 1; i >= 0; i-- {
 		index := a[i].index
@@ -141,6 +155,7 @@ func TestRemove1(t *testing.T) {
 			t.Errorf("Remove(%d) got %v; want %v", index, x, a[i])
 		}
 		verify(t, q)
+		verifyIndex(t, q)
 	}
 }
 
@@ -151,6 +166,7 @@ func TestRemove2(t *testing.T) {
 	}
 	q := New(a...)
 	verify(t, q)
+	verifyIndex(t, q)
 
 	for i := len(a) - 1; i >= 0; i-- {
 		x := a[i]
@@ -160,5 +176,6 @@ func TestRemove2(t *testing.T) {
 			t.Errorf("Remove(%d) got %v; want %v", index, y, x)
 		}
 		verify(t, q)
+		verifyIndex(t, q)
 	}
 }

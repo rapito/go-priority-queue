@@ -15,29 +15,29 @@
 package prio_test
 
 import (
-        . "prio"
-        "testing"
+	. "prio"
+	"testing"
 )
 
 func BenchmarkPop(b *testing.B) {
-        b.StopTimer()
-        q := BuildTestQueue(b.N)
-        b.StartTimer()
+	b.StopTimer()
+	q := BuildTestQueue(b.N)
+	b.StartTimer()
 
-        for i := 0; i < b.N; i++ {
-                q.Pop()
-        }
+	for i := 0; i < b.N; i++ {
+		q.Pop()
+	}
 }
 
 // Quickly builds a queue of n somewhat random elements from 0..8n-1.
 func BuildTestQueue(n int) Queue {
-		a := make([]Interface, n)
-        lfsr := uint16(0xace1) // linear feedback shift register
-        for i := n - 1; i >= 0; i-- {
-                bit := (lfsr>>0 ^ lfsr>>2 ^ lfsr>>3 ^ lfsr>>5) & 1
-                lfsr = lfsr>>1 | bit<<15
-                e := i<<3 + int(lfsr&0x7)
-                a[i] = myInt(e) // Add a number from 8i..8i+7.
-        }
-        return New(a...)
+	a := make([]Interface, n)
+	lfsr := uint16(0xace1) // linear feedback shift register
+	for i := n - 1; i >= 0; i-- {
+		bit := (lfsr>>0 ^ lfsr>>2 ^ lfsr>>3 ^ lfsr>>5) & 1
+		lfsr = lfsr>>1 | bit<<15
+		e := i<<3 + int(lfsr&0x7)
+		a[i] = myInt(e) // Add a number from 8i..8i+7.
+	}
+	return New(a...)
 }
