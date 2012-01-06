@@ -91,12 +91,7 @@ func TestNew1(t *testing.T) {
 
 func Test(t *testing.T) {
 	q := New()
-	for i := 20; i > 10; i-- {
-		q.Push(myInt(i))
-		verify(t, q)
-	}
-
-	for i := 10; i > 0; i-- {
+	for i := 20; i > 0; i-- {
 		q.Push(myInt(i))
 		verify(t, q)
 	}
