@@ -121,8 +121,8 @@ func Test(t *testing.T) {
 func TestRemove0(t *testing.T) {
 	a := make([]*myType, 10)
 	q := Queue{}
-	for i := 0; i < len(a); i++ {
-		a[i] = &myType{i, 0}
+	for i := len(a) - 1; i >= 0; i-- {
+		a[i] = &myType{i, 99}
 		q.Push(a[i])
 		verify(t, q)
 		verifyIndex(t, q)
@@ -142,7 +142,7 @@ func TestRemove1(t *testing.T) {
 	a := make([]*myType, 10)
 	q := Queue{}
 	for i := 0; i < len(a); i++ {
-		a[i] = &myType{i, 0}
+		a[i] = &myType{i, 99}
 		q.Push(a[i])
 		verify(t, q)
 		verifyIndex(t, q)
@@ -162,7 +162,7 @@ func TestRemove1(t *testing.T) {
 func TestRemove2(t *testing.T) {
 	a := make([]Interface, 10)
 	for i := len(a) - 1; i >= 0; i-- {
-		a[i] = &myType{i, 0}
+		a[i] = &myType{i, 99}
 	}
 	q := New(a...)
 	verify(t, q)
