@@ -56,8 +56,8 @@ type Queue struct {
 func New(x ...Interface) Queue {
 	q := Queue{x}
 	h := q.h
-	for i, v := range h {
-		v.Index(i)
+	for i := len(h) - 1; i >= 0; i-- {
+		h[i].Index(i)
 	}
 	heapify(h)
 	return q
