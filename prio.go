@@ -55,20 +55,15 @@ type Queue struct {
 // The complexity is O(n), where n = x.Len().
 func New(x ...Interface) Queue {
 	q := Queue{x}
-	h := q.h
-	for i := len(h) - 1; i >= 0; i-- {
-		h[i].Index(i)
-	}
-	heapify(h)
+	heapify(q.h)
 	return q
 }
 
 // Push pushes the element x onto the queue.
 // The complexity is O(log(n)) where n = q.Len().
 func (q *Queue) Push(x Interface) {
-	h := q.h
-	n := len(h)
-	q.h = append(h, x)
+	n := len(q.h)
+	q.h = append(q.h, x)
 	up(q.h, n) // x.Index(n) is done by up.
 }
 
@@ -79,9 +74,12 @@ func (q *Queue) Pop() Interface {
 	n := len(h) - 1
 	x := h[0]
 	h[0], h[n] = h[n], h[0]
-	down(h, 0, n) // h[0].Index(0) is done by down.
 	h[n] = nil
-	q.h = h[:n]
+	h = h[:n]
+	if n > 0 {
+		down(h, 0) // h[0].Index(0) is done by down.
+	}
+	q.h = h
 	return x
 }
 
@@ -96,13 +94,14 @@ func (q *Queue) Remove(i int) Interface {
 	h := q.h
 	n := len(h) - 1
 	x := h[i]
-	if n != i {
-		h[i], h[n] = h[n], h[i]
-		down(h, i, n) // h[i].Index(i) is done by down.
+	h[i], h[n] = h[n], h[i]
+	h[n] = nil
+	h = h[:n]
+	if i < n {
+		down(h, i) // h[i].Index(i) is done by down.
 		up(h, i)
 	}
-	h[n] = nil
-	q.h = h[:n]
+	q.h = h
 	return x
 }
 
@@ -114,36 +113,40 @@ func (q *Queue) Len() int {
 // Establishes the heap invariant in O(n) time.
 func heapify(h []Interface) {
 	n := len(h)
-	for i := n/2 - 1; i >= 0; i-- {
-		down(h, i, n)
+	for i := n - 1; i >= n/2; i-- {
+		h[i].Index(i)
+	}
+	for i := n/2 - 1; i >= 0; i-- { // h[i].Index(i) is done by down.
+		down(h, i)
 	}
 }
 
-// Moves element at position j towards top of heap to restore invariant.
-func up(h []Interface, j int) {
+// Moves element at position i towards top of heap to restore invariant.
+func up(h []Interface, i int) {
 	for {
-		i := (j - 1) / 2 // parent
-		if i == j || h[i].Less(h[j]) {
-			h[j].Index(j)
+		parent := (i - 1) / 2
+		if i == 0 || h[parent].Less(h[i]) {
+			h[i].Index(i)
 			break
 		}
-		h[i], h[j] = h[j], h[i]
-		h[j].Index(j)
-		j = i
+		h[parent], h[i] = h[i], h[parent]
+		h[i].Index(i)
+		i = parent
 	}
 }
 
 // Moves element at position i towards bottom of heap to restore invariant.
-func down(h []Interface, i, n int) {
+func down(h []Interface, i int) {
 	for {
-		j1 := 2*i + 1
-		if j1 >= n {
+		n := len(h)
+		left := 2*i + 1
+		if left >= n {
 			h[i].Index(i)
 			break
 		}
-		j := j1 // left child
-		if j2 := j1 + 1; j2 < n && !h[j1].Less(h[j2]) {
-			j = j2 // = 2*i + 2  // right child
+		j := left
+		if right := left + 1; right < n && h[right].Less(h[left]) {
+			j = right
 		}
 		if h[i].Less(h[j]) {
 			h[i].Index(i)
