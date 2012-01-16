@@ -12,27 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package prio provides a priority queue.
-//
-// The queue can hold elements that implement the two methods of prio.Interface.
-// The simplest use case looks like this:
-//
-//	type myInt int
-//
-//	func (x myInt) Less(y Interface) bool { return x < y.(myInt) }
-//	func (x myInt) Index(i int)           {}
-//
-// To use the Remove method you need to keep track of the index of elements in the heap, 
-// e.g. like this:
-//
-//	type myType struct {
-//		value int
-//		index int // index in heap
-// 	}
-//
-//	func (x *myType) Less(y Interface) bool { return x.value < y.(*myType).value }
-//	func (x *myType) Index(i int)           { x.index = i }
-//
+/*
+Package prio provides a priority queue.
+
+The queue can hold elements that implement the two methods of prio.Interface.
+The simplest use case looks like this:
+
+	type myInt int
+
+	func (x myInt) Less(y Interface) bool { return x < y.(myInt) }
+	func (x myInt) Index(i int)           {}
+
+To use the Remove method you need to keep track of the index of elements in the heap, 
+e.g. like this:
+
+	type myType struct {
+		value int
+		index int // index in heap
+ 	}
+
+	func (x *myType) Less(y Interface) bool { return x.value < y.(*myType).value }
+	func (x *myType) Index(i int)           { x.index = i }
+*/
 package prio
 
 // A type that implements prio.Interface can be inserted into a priority queue.
