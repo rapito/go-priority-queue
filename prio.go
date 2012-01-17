@@ -158,8 +158,3 @@ func down(h []Interface, i int) {
 		i = j
 	}
 }
-
-// Returns the element at index i in the queue. Exported for testing.
-func (q *Queue) get(i int) Interface {
-	return q.h[i]
-}
