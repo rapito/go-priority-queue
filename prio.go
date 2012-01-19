@@ -74,13 +74,13 @@ func (q *Queue) Pop() Interface {
 	h := q.h
 	n := len(h) - 1
 	x := h[0]
-	h[0], h[n] = h[n], h[0]
-	h[n] = nil
+	h[0], h[n] = h[n], nil
 	h = h[:n]
 	if n > 0 {
 		down(h, 0) // h[0].Index(0) is done by down.
 	}
 	q.h = h
+	x.Index(-1) // for safety
 	return x
 }
 
@@ -95,14 +95,14 @@ func (q *Queue) Remove(i int) Interface {
 	h := q.h
 	n := len(h) - 1
 	x := h[i]
-	h[i], h[n] = h[n], h[i]
-	h[n] = nil
+	h[i], h[n] = h[n], nil
 	h = h[:n]
 	if i < n {
 		down(h, i) // h[i].Index(i) is done by down.
 		up(h, i)
 	}
 	q.h = h
+	x.Index(-1) // for safety
 	return x
 }
 
