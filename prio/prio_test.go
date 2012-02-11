@@ -12,12 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package prio_test
+package prio
 
-import (
-	. "prio"
-	"testing"
-)
+import "testing"
 
 type myInt int
 
@@ -37,8 +34,8 @@ func verify(t *testing.T, q Queue) {
 	n := q.Len()
 	for i := 1; i < n; i++ {
 		p := (i - 1) / 2 // parent
-		qi := q.Get(i)
-		qp := q.Get(p)
+		qi := q.h[i]
+		qp := q.h[p]
 		if qi.Less(qp) {
 			t.Errorf("heap invariant invalidated [%d] = %v < [%d] = %v", i, qi, p, qp)
 		}
@@ -48,7 +45,7 @@ func verify(t *testing.T, q Queue) {
 // Verify that all elements in a queue of myType have been given the correct index.
 func verifyIndex(t *testing.T, q Queue) {
 	for i := 0; i < q.Len(); i++ {
-		index := q.Get(i).(*myType).index
+		index := q.h[i].(*myType).index
 		if index != i {
 			t.Errorf("wrong index [%d] = %d", i, index)
 		}
