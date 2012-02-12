@@ -29,7 +29,7 @@ e.g. like this:
 	type myType struct {
 		value int
 		index int // index in heap
- 	}
+	}
 
 	func (x *myType) Less(y Interface) bool { return x.value < y.(*myType).value }
 	func (x *myType) Index(i int)           { x.index = i }
