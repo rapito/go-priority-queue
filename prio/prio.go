@@ -20,8 +20,8 @@ The simplest use case looks like this:
 
 	type myInt int
 
-	func (x myInt) Less(y Interface) bool { return x < y.(myInt) }
-	func (x myInt) Index(i int)           {}
+	func (x myInt) Less(y prio.Interface) bool { return x < y.(myInt) }
+	func (x myInt) Index(i int)                {}
 
 To use the Remove method you need to keep track of the index of elements in the heap, 
 e.g. like this:
@@ -31,8 +31,8 @@ e.g. like this:
 		index int // index in heap
 	}
 
-	func (x *myType) Less(y Interface) bool { return x.value < y.(*myType).value }
-	func (x *myType) Index(i int)           { x.index = i }
+	func (x *myType) Less(y prio.Interface) bool { return x.value < y.(*myType).value }
+	func (x *myType) Index(i int)                { x.index = i }
 */
 package prio
 

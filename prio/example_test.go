@@ -29,7 +29,6 @@ func (x *myType) Index(i int)                { x.index = i }
 
 // 0234
 func ExampleQueue() {
-	// myType implements prio.Interface as shown above in the package overview.
 	a := make([]*myType, 5)
 	q := prio.New()
 
@@ -39,7 +38,7 @@ func ExampleQueue() {
 		q.Push(a[i])
 	}
 
-	q.Remove(a[1].index) // Use index to find and remove element with value 1.
+	q.Remove(a[1].index) // Use index to find and remove element.
 	for q.Len() > 0 {
 		fmt.Print(q.Pop().(*myType).value)
 	}
