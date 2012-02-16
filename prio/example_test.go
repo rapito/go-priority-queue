@@ -27,7 +27,6 @@ type myType struct {
 func (x *myType) Less(y prio.Interface) bool { return x.value < y.(*myType).value }
 func (x *myType) Index(i int)                { x.index = i }
 
-// 0234
 func ExampleQueue() {
 	a := make([]*myType, 5)
 	q := prio.New()
@@ -42,4 +41,6 @@ func ExampleQueue() {
 	for q.Len() > 0 {
 		fmt.Print(q.Pop().(*myType).value)
 	}
+	// Output:
+	// 0234
 }
