@@ -41,6 +41,5 @@ func ExampleQueue() {
 	for q.Len() > 0 {
 		fmt.Print(q.Pop().(*myType).value)
 	}
-	// Output:
-	// 0234
+	// Output: 0234
 }
