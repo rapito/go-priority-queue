@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
-Package prio provides a priority queue.
+// Package prio provides a priority queue.
+// The queue can hold elements that implement the two methods of prio.Interface.
+package prio
 
-The queue can hold elements that implement the two methods of prio.Interface.
+/*
+A type that implements prio.Interface can be inserted into a priority queue.
+
 The simplest use case looks like this:
 
 	type myInt int
@@ -23,8 +26,8 @@ The simplest use case looks like this:
 	func (x myInt) Less(y prio.Interface) bool { return x < y.(myInt) }
 	func (x myInt) Index(i int)                {}
 
-To use the Remove method you need to keep track of the index of elements in the heap, 
-e.g. like this:
+To use the Remove method you need to keep track of the index of elements
+in the heap, e.g. like this:
 
 	type myType struct {
 		value int
@@ -34,9 +37,6 @@ e.g. like this:
 	func (x *myType) Less(y prio.Interface) bool { return x.value < y.(*myType).value }
 	func (x *myType) Index(i int)                { x.index = i }
 */
-package prio
-
-// A type that implements prio.Interface can be inserted into a priority queue.
 type Interface interface {
 	// Less returns whether this element should sort before element x.
 	Less(x Interface) bool
@@ -51,9 +51,9 @@ type Queue struct {
 }
 
 // New returns an initialized priority queue with the given elements.
-// A call of the form New(x...) uses the underlying array of x to implement the queue
-// and hence might change the elements of x.
-// The complexity is O(n), where n = x.Len().
+// A call of the form New(x...) uses the underlying array of x to implement
+// the queue and hence might change the elements of x.
+// The complexity is O(n), where n = len(x).
 func New(x ...Interface) Queue {
 	q := Queue{x}
 	heapify(q.h)

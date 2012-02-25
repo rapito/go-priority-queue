@@ -28,18 +28,18 @@ func (x *myType) Less(y prio.Interface) bool { return x.value < y.(*myType).valu
 func (x *myType) Index(i int)                { x.index = i }
 
 func ExampleQueue() {
-	a := make([]*myType, 5)
-	q := prio.New()
+	var q prio.Queue
 
-	// Create and push elements with values 0 to 4 onto the queue.
+	// Create and push five elements with values 1 to 5 onto the queue.
+	a := make([]*myType, 5)
 	for i := range a {
-		a[i] = &myType{value: i}
+		a[i] = &myType{value: i + 1}
 		q.Push(a[i])
 	}
 
-	q.Remove(a[1].index) // Use index to find and remove element.
+	q.Remove(a[1].index) // Use index to find and remove second element.
 	for q.Len() > 0 {
 		fmt.Print(q.Pop().(*myType).value)
 	}
-	// Output: 0234
+	// Output: 1345
 }
