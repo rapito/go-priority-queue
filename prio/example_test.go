@@ -15,7 +15,7 @@
 package prio_test
 
 import (
-	prio "code.google.com/p/go-priority-queue/prio"
+	prio "."
 	"fmt"
 )
 
