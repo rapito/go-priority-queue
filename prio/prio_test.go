@@ -29,7 +29,8 @@ type myType struct {
 func (x *myType) Less(y Interface) bool { return x.value < y.(*myType).value }
 func (x *myType) Index(i int)           { x.index = i }
 
-// Verify the ordering of all elements in the heap.
+// Verify the heap order.
+// For a queue with elements of type *myType, also check the index values.
 func verify(t *testing.T, q Queue) {
 	n := q.Len()
 	for i := 1; i < n; i++ {
@@ -40,11 +41,13 @@ func verify(t *testing.T, q Queue) {
 			t.Errorf("heap invariant invalidated [%d] = %v < [%d] = %v", i, qi, p, qp)
 		}
 	}
-}
-
-// Verify that all elements in a queue of myType have been given the correct index.
-func verifyIndex(t *testing.T, q Queue) {
-	for i := 0; i < q.Len(); i++ {
+	if n == 0 {
+		return
+	}
+	if _, ok := q.h[0].(*myType); !ok {
+		return
+	}
+	for i := 0; i < n; i++ {
 		index := q.h[i].(*myType).index
 		if index != i {
 			t.Errorf("wrong index [%d] = %d", i, index)
@@ -117,7 +120,6 @@ func TestRemove0(t *testing.T) {
 		a[i] = &myType{i, 99}
 		q.Push(a[i])
 		verify(t, q)
-		verifyIndex(t, q)
 	}
 
 	for i := 0; i < len(a); i++ {
@@ -126,7 +128,6 @@ func TestRemove0(t *testing.T) {
 			t.Errorf("Remove(0) got %v; want %v", x, a[i])
 		}
 		verify(t, q)
-		verifyIndex(t, q)
 	}
 }
 
@@ -137,7 +138,6 @@ func TestRemove1(t *testing.T) {
 		a[i] = &myType{i, 99}
 		q.Push(a[i])
 		verify(t, q)
-		verifyIndex(t, q)
 	}
 
 	for i := len(a) - 1; i >= 0; i-- {
@@ -147,7 +147,6 @@ func TestRemove1(t *testing.T) {
 			t.Errorf("Remove(%d) got %v; want %v", index, x, a[i])
 		}
 		verify(t, q)
-		verifyIndex(t, q)
 	}
 }
 
@@ -158,7 +157,6 @@ func TestRemove2(t *testing.T) {
 	}
 	q := New(a...)
 	verify(t, q)
-	verifyIndex(t, q)
 
 	for i := len(a) - 1; i >= 0; i-- {
 		x := a[i]
@@ -168,6 +166,5 @@ func TestRemove2(t *testing.T) {
 			t.Errorf("Remove(%d) got %v; want %v", index, y, x)
 		}
 		verify(t, q)
-		verifyIndex(t, q)
 	}
 }
