@@ -30,14 +30,12 @@ func (x *myType) Index(i int)                { x.index = i }
 func ExampleQueue() {
 	var q prio.Queue
 
-	// Create and push five elements with values 1 to 5 onto the queue.
-	a := make([]*myType, 5)
+	a := []*myType{{2, 0}, {4, 0}, {1, 0}, {5, 0}, {3, 0}}
 	for i := range a {
-		a[i] = &myType{value: i + 1}
 		q.Push(a[i])
 	}
 
-	q.Remove(a[1].index) // Use index to find and remove second element.
+	q.Remove(a[0].index) // Use index to locate and remove element.
 	for q.Len() > 0 {
 		fmt.Print(q.Pop().(*myType).value)
 	}
