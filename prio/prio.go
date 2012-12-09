@@ -61,7 +61,7 @@ func New(x ...Interface) Queue {
 }
 
 // Push pushes the element x onto the queue.
-// The complexity is O(log(n)) where n = q.Len().
+// The complexity is O(log(n)), where n = q.Len().
 func (q *Queue) Push(x Interface) {
 	n := len(q.h)
 	q.h = append(q.h, x)
