@@ -141,7 +141,7 @@ func down(h []Interface, i int) {
 	for {
 		n := len(h)
 		left := 2*i + 1
-		if left >= n {
+		if left >= n || left < 0 { // left < 0 after int overflow
 			h[i].Index(i)
 			break
 		}
