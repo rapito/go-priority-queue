@@ -35,9 +35,11 @@ func ExampleQueue() {
 		q.Push(a[i])
 	}
 
-	q.Remove(a[0].index) // Use index to locate and remove element.
+	q.Remove(a[0].index) // Locate and remove element a[0] (with value 2).
+	a[1].value = 6
+	q.Fix(a[1].index) // Fix heap ordering after changing value of a[1] (from 4 to 6).
 	for q.Len() > 0 {
 		fmt.Print(q.Pop().(*myType).value)
 	}
-	// Output: 1345
+	// Output: 1356
 }

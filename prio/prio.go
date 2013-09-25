@@ -111,6 +111,15 @@ func (q *Queue) Len() int {
 	return len(q.h)
 }
 
+// Fix reestablishes the heap ordering after the element at index i has changed its value.
+// Changing the value of the element at index i and then calling Fix is equivalent to,
+// but less expensive than, calling Remove(i) followed by a Push of the new value.
+// The complexity is O(log(n)) where n = q.Len().
+func (q *Queue) Fix(i int) {
+	up(q.h, i)
+	down(q.h, i)
+}
+
 // Establishes the heap invariant in O(n) time.
 func heapify(h []Interface) {
 	n := len(h)

@@ -57,7 +57,7 @@ func verify(t *testing.T, q Queue) {
 
 func TestNew0(t *testing.T) {
 	a := make([]Interface, 10)
-	for i := 0; i < 10; i++ {
+	for i, _ := range a {
 		a[i] = myInt(0)
 	}
 	q := New(a...)
@@ -74,7 +74,7 @@ func TestNew0(t *testing.T) {
 
 func TestNew1(t *testing.T) {
 	a := make([]Interface, 10)
-	for i := 0; i < 10; i++ {
+	for i, _ := range a {
 		a[i] = myInt(i + 1)
 	}
 	q := New(a...)
@@ -164,6 +164,29 @@ func TestRemove2(t *testing.T) {
 		y := q.Remove(index)
 		if x != y {
 			t.Errorf("Remove(%d) got %v; want %v", index, y, x)
+		}
+		verify(t, q)
+	}
+}
+
+func TestFix(t *testing.T) {
+	a := make([]*myType, 10)
+	q := Queue{}
+	for i, _ := range a {
+		a[i] = &myType{len(a) - 2*i, 99}
+		q.Push(a[i])
+		verify(t, q)
+	}
+
+	for i, _ := range a {
+		a[i].value = i
+		q.Fix(a[i].index)
+	}
+
+	for i := 0; i < len(a); i++ {
+		x := q.Remove(0)
+		if x != a[i] {
+			t.Errorf("Remove(0) got %v; want %v", x, a[i])
 		}
 		verify(t, q)
 	}
